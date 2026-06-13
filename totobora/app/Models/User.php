@@ -10,12 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $fillable = ['name', 'first_name', 'last_name', 'email', 'password', 'role', 'facility_id'];
+
 
     /**
      * Get the attributes that should be cast.
@@ -29,4 +31,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function facility(){
+        return $this->belongsTo(Facility::class, 'facility_id', 'facility_id');
+    }
+    public function isAdmin(): bool {
+        return $this->role === 'admin';
+    }
+    public function isHealthcareWorker(): bool {
+        return $this->role === 'healthcare_worker';
+    }
+    
 }
